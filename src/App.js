@@ -16,33 +16,70 @@ function App() {
   }
 
   function findCountryData(name) {
+    //console.log("inside country data", name);
+
     switch (name) {
+      /*
       case "United States of America":
         name = "US";
         break;
-
+   
       case "Dominican Rep.":
         name = "Dominican Republic";
+        break;
+      */
+
+      case "Russia":
+        name = "Russian Federation";
+        break;
+
+      case "North Korea":
+        name = "Korea (North)";
+        break;
+
+      case "South Korea":
+        name = "Korea (South)";
+        break;
+
+      case "Venezuela":
+        name = "Venezuela (Bolivarian Republic)";
+        break;
+
+      case "Vietnam":
+        name = "Viet Nam";
+        break;
+
+      case "Laos":
+        name = "Lao PDR";
+        break;
+
+      case "United Republic of Tanzania":
+        name = "Tanzania, United Republic of";
         break;
 
       case "Bosnia and Herz.":
         name = "Bosnia and Herzegovina";
         break;
 
-      case "Dem. Rep. Congo":
+      case "Democratic Republic of the Congo":
         name = "Congo (Kinshasa)";
         break;
 
+      case "Republic of the Congo":
+        name = "Congo (Brazzaville)";
+        break;
+      /*
       case "Central African Rep.":
         name = "Central African Republic";
         break;
-
+      */
       default:
         break;
     }
 
     for (let i = 0; i < data.data.Countries.length; i++) {
-      if (data.data.Countries[i].Country.includes(name)) {
+      //console.log(`${data.data.Countries[i].Country} ?== ${name}`);
+      if (data.data.Countries[i].Country === name) {
         return `
         Confirmed Cases: ${data.data.Countries[i].TotalConfirmed} <br />
         Total Deaths: ${data.data.Countries[i].TotalDeaths} <br />
@@ -58,13 +95,13 @@ function App() {
     // load data
     axios
       .get("../datasets/ne_110m_admin_0_countries.geojson")
-      .then(function(response) {
+      .then(function (response) {
         // handle success
         //console.log(response.data);
         getData();
         setCountries(response.data);
       })
-      .catch(function(error) {
+      .catch(function (error) {
         // handle error
         console.log(error);
       });
@@ -73,11 +110,11 @@ function App() {
   const colorScale = d3.scaleSequentialSqrt(d3.interpolateYlOrRd);
 
   // GDP per capita (avoiding countries with small pop)
-  const getVal = feat =>
+  const getVal = (feat) =>
     feat.properties.GDP_MD_EST / Math.max(1e5, feat.properties.POP_EST);
 
   const maxVal = useMemo(() => Math.max(...countries.features.map(getVal)), [
-    countries
+    countries,
   ]);
   colorScale.domain([0, maxVal]);
 
@@ -86,8 +123,8 @@ function App() {
       globeImageUrl="//unpkg.com/three-globe/example/img/earth-night.jpg"
       backgroundImageUrl="//unpkg.com/three-globe/example/img/night-sky.png"
       polygonsData={countries.features}
-      polygonAltitude={d => (d === hoverD ? 0.12 : 0.06)}
-      polygonCapColor={d =>
+      polygonAltitude={(d) => (d === hoverD ? 0.12 : 0.06)}
+      polygonCapColor={(d) =>
         d === hoverD ? "steelblue" : colorScale(getVal(d))
       }
       polygonSideColor={() => "rgba(0, 100, 0, 0.15)"}
